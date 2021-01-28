@@ -44,6 +44,17 @@ pipeline {
       }
     }
 
+    stage('Deploy to Dev') {
+      when { 
+        branch 'master' 
+      }
+      agent any
+      steps {
+        echo 'Deployment to dev environment with Docker Compose'
+        sh 'docker-compose up -d'
+      }
+    }
+
     stage('DockerBnP') {
       when { 
         branch 'master' 
