@@ -28,14 +28,14 @@ pipeline {
     }
 
     stage('package') {
+      when { 
+        branch 'master' 
+      }
       agent {
         docker {
           image 'maven:3.6.3-jdk-11-slim'
         }
 
-      }
-      when { 
-        branch 'master' 
       }
       steps {
         echo 'packaging sysfoo app'
@@ -44,11 +44,22 @@ pipeline {
       }
     }
 
-    stage('DockerBnP') {
-      agent any
+    stage('Deploy to Dev') {
       when { 
         branch 'master' 
       }
+      agent any
+      steps {
+        echo 'Deployment to dev environment with Docker Compose'
+        sh 'docker-compose up -d'
+      }
+    }
+
+    stage('DockerBnP') {
+      when { 
+        branch 'master' 
+      }
+      agent any
       steps {
         script {
           docker.withRegistry('https://index.docker.io/v1/', 'dockerlogin') {
